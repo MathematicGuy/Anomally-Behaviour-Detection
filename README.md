@@ -71,3 +71,52 @@ frames/
         ├── frame_5.jpg
         ...
 ```
+
+```mermaid
+%% Training Pipeline
+flowchart TD
+    subgraph Preprocessing
+        A[Raw Video Files] --> B[Ensure Vertical Orientation]
+        B --> C[Resize Frames to 720×1280]
+        C --> D[Extract Pose Keypoints]
+    end
+
+    subgraph Segmentation & Padding
+        D --> E[Segment Sequence with Tail]
+        E --> F[Segments of shape max_seq_len, n_features]
+    end
+
+    subgraph Dataset Assembly
+        F --> G[Collect X_seq_padded & y_seq_labels]
+        G --> H[Convert to NumPy arrays]
+    end
+
+    subgraph Model Training & Tuning
+        H --> I[Define build_lstm_model / build_gru_model / build_dnn_model]
+        I --> J[Grid Search over dropout_rate]
+        J --> K[Fit each model with validation_data]
+        K --> L[Record train_acc & val_acc]
+        K --> M[Save each model to .keras/.h5]
+    end
+
+    subgraph Visualization
+        L --> N[Create DataFrame of results]
+        N --> O[Plot Test Accuracy vs Dropout]
+    end
+```
+
+```mermaid
+%% Live Inference Pipeline
+flowchart TD
+  subgraph Live_Inference
+    P[Start Webcam / Video Input] --> Q[Ensure Vertical & Resize]
+    Q --> R[Pose Estimation & Keypoint Extraction]
+    R --> S[Update Rolling Buffer]
+    S --> T[Visibility Check – wrists and ankles]
+    T --> U[Speed Check – landmark movement]
+    U --> V{Limbs detected AND speed > threshold?}
+    V -- "No"  --> W[Label ‘Non‑violent’]
+    V -- "Yes" --> X[Model Inference LSTM/GRU/DNN]
+    X --> Y[Display Label & Draw Landmarks]
+  end
+```
