@@ -46,9 +46,9 @@ Single_person_violent/
 │   ├── punching1.mp4
 │   ├── punching2.mp4
 │   └── ...
-└── Non-violent
-    ├── non1.mp4
-    ├── non2.mp4
+└── Standing
+    ├── standing1.mp4
+    ├── standing2.mp4
     └── ...
 ```
 
